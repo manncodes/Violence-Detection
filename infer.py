@@ -37,6 +37,8 @@ video_exts = ".avi"
 
 in_dir = "data"
 
+
+
 def get_frames(current_dir, file_name):
     in_file = os.path.join(current_dir, file_name)
     images = []
@@ -53,15 +55,13 @@ def get_frames(current_dir, file_name):
     resul = (resul / 255.).astype(np.float16)
     return resul
 
+
 def get_transfer_values(current_dir, file_name):
     
     # Pre-allocate input-batch-array for images.
     shape = (_images_per_file,) + img_size_touple + (3,)
-    
     image_batch = np.zeros(shape=shape, dtype=np.float16)
-    
     image_batch = get_frames(current_dir, file_name)
-      
     # Pre-allocate output-array for transfer-values.
     # Note that we use 16-bit floating-points to save memory.
     shape = (_images_per_file, transfer_values_size)
@@ -88,12 +88,11 @@ if __name__ == "__main__":
     arg = sys.argv
     model = keras.models.load_model('model/vlstm_92.h5')
     image_model = VGG16(include_top=True, weights='imagenet')    
-    # We will use the output of the layer prior to the final
+    #We will use the output of the layer prior to the final
     # classification-layer which is named fc2. This is a fully-connected (or dense) layer.
     transfer_layer = image_model.get_layer('fc2')
     image_model_transfer = Model(inputs=image_model.input,outputs=transfer_layer.output)
     transfer_values_size = K.int_shape(transfer_layer.output)[1]
-
     start_time = time.time()
     infer(in_dir,arg[1])
     end_time = time.time()
