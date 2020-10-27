@@ -7,7 +7,16 @@ from keras import backend as K
 from keras.models import Model
 import sys
 import time
+import multiprocessing
 from termcolor import colored
+
+model = keras.models.load_model('model/vlstm_92.h5')
+image_model = VGG16(include_top=True, weights='imagenet')    
+#We will use the output of the layer prior to the final
+# classification-layer which is named fc2. This is a fully-connected (or dense) layer.
+transfer_layer = image_model.get_layer('fc2')
+image_model_transfer = Model(inputs=image_model.input,outputs=transfer_layer.output)
+transfer_values_size = K.int_shape(transfer_layer.output)[1]
 
 # Frame size  
 img_size = 224
@@ -36,8 +45,6 @@ _num_images_train = _num_files_train * _images_per_file
 video_exts = ".avi"
 
 in_dir = "data"
-
-
 
 def get_frames(current_dir, file_name):
     in_file = os.path.join(current_dir, file_name)
@@ -86,16 +93,24 @@ def infer(curr_dir,file_name):
 
 if __name__ == "__main__":
     arg = sys.argv
-    model = keras.models.load_model('model/vlstm_92.h5')
-    image_model = VGG16(include_top=True, weights='imagenet')    
-    #We will use the output of the layer prior to the final
-    # classification-layer which is named fc2. This is a fully-connected (or dense) layer.
-    transfer_layer = image_model.get_layer('fc2')
-    image_model_transfer = Model(inputs=image_model.input,outputs=transfer_layer.output)
-    transfer_values_size = K.int_shape(transfer_layer.output)[1]
     start_time = time.time()
     infer(in_dir,arg[1])
+
     end_time = time.time()
     delta = round(end_time-start_time,2)
-    print("Inferrence time: "+str(delta))
-    print(str(round(20/delta,2))+" fps ^_^")
+    fps = round(20/delta,2)
+    print("Inferrence time: "+str(delta)+" s")
+    print(str(fps)+" fps ^_^")
+    vpath = in_dir + '\\' + arg[1]
+    cap = cv2.VideoCapture(vpath)
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        time.sleep(0.05)
+        try:
+            cv2.imshow('frame', frame)
+        except:
+            break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
