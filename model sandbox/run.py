@@ -7,8 +7,8 @@ from keras.optimizers import RMSprop, Adam
 import pandas as pd
 from keras.applications import Xception, ResNet50, InceptionV3, MobileNet, VGG19, DenseNet121, InceptionResNetV2, VGG16
 from keras.layers import LSTM, ConvLSTM2D
-import BuildModel_basic
-import DatasetBuilder
+from . import BuildModel_basic
+from . import DatasetBuilder
 
 from numpy.random import seed, shuffle
 
