@@ -134,7 +134,7 @@ def hyper_tune_network(dataset_name, epochs, batch_size, batch_epoch_ratio, figu
     #
     cnns_arch_values = list(cnns_arch.values())
     best_params_train = dict(optimizer=optimizers[0], learning_rate=learning_rates[0],
-                             cnn_train_type=cnn_train_types[0], cnn_arch=cnns_arch.values[0],
+                             cnn_train_type=cnn_train_types[0], cnn_arch=cnns_arch_values[0],
                              dropout=dropouts[0])
     exp_params_train = dict(optimizer=optimizers[1:], learning_rate=learning_rates[1:],
                             cnn_train_type=cnn_train_types[1:], dropout=dropouts[1:],
