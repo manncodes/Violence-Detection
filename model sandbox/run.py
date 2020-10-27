@@ -12,7 +12,7 @@ import DatasetBuilder
 
 from numpy.random import seed, shuffle
 
-from tensorflow import set_random_seed
+from tensorflow.random import set_seed as set_random_seed
 from collections import defaultdict
 
 
@@ -132,9 +132,9 @@ def hyper_tune_network(dataset_name, epochs, batch_size, batch_epoch_ratio, figu
     exp_params_order = ['cnn_arch', 'learning_rate', 'seq_len', 'use_aug', 'dropout',
                         'cnn_train_type']  # 'cnn_arch','learning_rate','fix_len','use_aug','dropout', 'optimizer','optimizer',
     #
-
+    cnns_arch_values = list(cnns_arch.values())
     best_params_train = dict(optimizer=optimizers[0], learning_rate=learning_rates[0],
-                             cnn_train_type=cnn_train_types[0], cnn_arch=cnns_arch.values()[0],
+                             cnn_train_type=cnn_train_types[0], cnn_arch=cnns_arch.values[0],
                              dropout=dropouts[0])
     exp_params_train = dict(optimizer=optimizers[1:], learning_rate=learning_rates[1:],
                             cnn_train_type=cnn_train_types[1:], dropout=dropouts[1:],
